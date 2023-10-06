@@ -54,6 +54,17 @@ TEST(file, ReadFileToString_WriteStringToFile) {
   EXPECT_EQ("abc", s);
 }
 
+TEST(file, ReadFileToStringPath_WriteStringToFilePath) {
+  TemporaryFile tf;
+  ASSERT_NE(tf.fd, -1) << tf.path;
+  ASSERT_TRUE(android::base::WriteStringToFilePath(tf.path, "abc"))
+                        << strerror(errno);
+  std::string s;
+  ASSERT_TRUE(android::base::ReadFileToStringPath(tf.path, &s))
+                        << strerror(errno);
+  EXPECT_EQ("abc", s);
+}
+
 // symlinks require elevated privileges on Windows.
 #if !defined(_WIN32)
 TEST(file, ReadFileToString_WriteStringToFile_symlink) {
