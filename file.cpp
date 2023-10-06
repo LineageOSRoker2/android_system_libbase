@@ -237,7 +237,7 @@ bool ReadFdToString(borrowed_fd fd, std::string* content) {
 bool ReadFileToString(const std::string& path, std::string* content, bool follow_symlinks) {
   content->clear();
 
-  int flags = O_RDONLY | O_CLOEXEC | O_BINARY | (follow_symlinks ? 0 : O_NOFOLLOW);
+  const int flags = O_RDONLY | O_CLOEXEC | O_BINARY | (follow_symlinks ? 0 : O_NOFOLLOW);
   android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(path.c_str(), flags)));
   if (fd == -1) {
     return false;
@@ -249,7 +249,7 @@ bool ReadFileToString(const std::filesystem::path& path, std::string* content,
                       bool follow_symlinks) {
   content->clear();
 
-  int flags = O_RDONLY | O_CLOEXEC | O_BINARY | (follow_symlinks ? 0 : O_NOFOLLOW);
+  const int flags = O_RDONLY | O_CLOEXEC | O_BINARY | (follow_symlinks ? 0 : O_NOFOLLOW);
   android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(path.c_str(), flags)));
   if (fd == -1) {
     return false;
@@ -311,7 +311,7 @@ bool WriteStringToFile(const std::string& content, const std::string& path,
 
 bool WriteStringToFile(const std::string& content, const std::string& path,
                        bool follow_symlinks) {
-  int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
+  const int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
               (follow_symlinks ? 0 : O_NOFOLLOW);
   android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(path.c_str(), flags, 0666)));
   if (fd == -1) {
@@ -322,7 +322,7 @@ bool WriteStringToFile(const std::string& content, const std::string& path,
 
 bool WriteStringToFile(const std::filesystem::path& path, const std::string& content,
                        bool follow_symlinks) {
-  int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
+  const int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
               (follow_symlinks ? 0 : O_NOFOLLOW);
   android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(path.c_str(), flags, 0666)));
   if (fd == -1) {
@@ -418,11 +418,11 @@ bool RemoveFileIfExists(const std::string& path, std::string* err) {
   struct stat st;
 #if defined(_WIN32)
   // TODO: Windows version can't handle symbolic links correctly.
-  int result = stat(path.c_str(), &st);
-  bool file_type_removable = (result == 0 && S_ISREG(st.st_mode));
+  const int result = stat(path.c_str(), &st);
+  const bool file_type_removable = (result == 0 && S_ISREG(st.st_mode));
 #else
-  int result = lstat(path.c_str(), &st);
-  bool file_type_removable = (result == 0 && (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)));
+  const int result = lstat(path.c_str(), &st);
+  const bool file_type_removable = (result == 0 && (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)));
 #endif
   if (result == -1) {
     if (errno == ENOENT || errno == ENOTDIR) return true;
