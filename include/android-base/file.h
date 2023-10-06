@@ -82,7 +82,7 @@ namespace base {
 bool ReadFdToString(borrowed_fd fd, std::string* content);
 bool ReadFileToString(const std::string& path, std::string* content,
                       bool follow_symlinks = false);
-bool ReadFileToString(const std::filesystem::path& path, std::string* content,
+bool ReadFileToStringPath(const std::filesystem::path& path, std::string* content,
                       bool follow_symlinks = false);
 
 bool WriteStringToFd(const std::string& content, borrowed_fd fd);
@@ -95,7 +95,7 @@ bool WriteStringToFile(const std::string& content, const std::string& path,
 
 bool WriteStringToFile(const std::string& content, const std::string& path,
                        bool follow_symlinks = false);
-bool WriteStringToFile(const std::filesystem::path& path, const std::string& content,
+bool WriteStringToFilePath(const std::filesystem::path& path, const std::string& content,
                        bool follow_symlinks = false);
 
 bool ReadFully(borrowed_fd fd, void* data, size_t byte_count);

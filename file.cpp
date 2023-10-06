@@ -244,7 +244,7 @@ bool ReadFileToString(const std::string& path, std::string* content, bool follow
   return ReadFdToString(fd, content);
 }
 
-bool ReadFileToString(const std::filesystem::path& path, std::string* content,
+bool ReadFileToStringPath(const std::filesystem::path& path, std::string* content,
                       bool follow_symlinks) {
   content->clear();
 
@@ -319,7 +319,7 @@ bool WriteStringToFile(const std::string& content, const std::string& path,
   return WriteStringToFd(content, fd) || CleanUpAfterFailedWrite(path);
 }
 
-bool WriteStringToFile(const std::filesystem::path& path, const std::string& content,
+bool WriteStringToFilePath(const std::filesystem::path& path, const std::string& content,
                        bool follow_symlinks) {
   const int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
               (follow_symlinks ? 0 : O_NOFOLLOW);
