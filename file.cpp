@@ -230,7 +230,7 @@ bool ReadFdToString(borrowed_fd fd, std::string* content) {
   while ((n = TEMP_FAILURE_RETRY(read(fd.get(), &buf[0], sizeof(buf)))) > 0) {
     content->append(buf, n);
   }
-  return (n == 0) ? true : false;
+  return n == 0;
 }
 
 bool ReadFileToString(const std::string& path, std::string* content, bool follow_symlinks) {
