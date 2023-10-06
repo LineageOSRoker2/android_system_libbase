@@ -245,6 +245,18 @@ bool ReadFileToString(const std::string& path, std::string* content, bool follow
   return ReadFdToString(fd, content);
 }
 
+bool ReadFileToString(const std::filesystem::path& path, std::string* content,
+                      bool follow_symlinks) {
+  content->clear();
+
+  int flags = O_RDONLY | O_CLOEXEC | O_BINARY | (follow_symlinks ? 0 : O_NOFOLLOW);
+  android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(path.c_str(), flags)));
+  if (fd == -1) {
+    return false;
+  }
+  return ReadFdToString(fd, content);
+}
+
 bool WriteStringToFd(std::string_view content, borrowed_fd fd) {
   const char* p = content.data();
   size_t left = content.size();
@@ -298,6 +310,17 @@ bool WriteStringToFile(const std::string& content, const std::string& path,
 #endif
 
 bool WriteStringToFile(const std::string& content, const std::string& path,
+                       bool follow_symlinks) {
+  int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
+              (follow_symlinks ? 0 : O_NOFOLLOW);
+  android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(path.c_str(), flags, 0666)));
+  if (fd == -1) {
+    return false;
+  }
+  return WriteStringToFd(content, fd) || CleanUpAfterFailedWrite(path);
+}
+
+bool WriteStringToFile(const std::filesystem::path& path, const std::string& content,
                        bool follow_symlinks) {
   int flags = O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_BINARY |
               (follow_symlinks ? 0 : O_NOFOLLOW);
